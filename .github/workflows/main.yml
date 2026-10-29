@@ -1,0 +1,36 @@
+name: Build VCam
+
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - main
+
+jobs:
+  build:
+    runs-on: macos-14
+
+    steps:
+      - name: Checkout source
+        uses: actions/checkout@v4
+
+      - name: Install Theos
+        run: |
+          git clone --depth 1 https://github.com/theos/theos.git "$RUNNER_TEMP/theos"
+          echo "THEOS=$RUNNER_TEMP/theos" >> "$GITHUB_ENV"
+
+      - name: Install iOS SDK
+        run: |
+          git clone --depth 1 https://github.com/theos/sdks.git "$RUNNER_TEMP/sdks"
+          cp -R "$RUNNER_TEMP/sdks/iPhoneOS.sdk" "$RUNNER_TEMP/theos/sdks/"
+
+      - name: Build package
+        run: |
+          make package FINALPACKAGE=1
+
+      - name: Upload deb
+        uses: actions/upload-artifact@v4
+        with:
+          name: VCam-deb
+          path: packages/*.deb
+          if-no-files-found: error
