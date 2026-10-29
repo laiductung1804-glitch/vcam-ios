@@ -15,12 +15,15 @@ jobs:
       - name: Checkout source
         uses: actions/checkout@v4
 
+      - name: Install build dependencies
+        run: |
+          brew install ldid
+
       - name: Install Theos
         run: |
           git clone --depth 1 --recurse-submodules https://github.com/theos/theos.git "$RUNNER_TEMP/theos"
           echo "THEOS=$RUNNER_TEMP/theos" >> "$GITHUB_ENV"
           echo "$RUNNER_TEMP/theos/bin" >> "$GITHUB_PATH"
-          chmod +x "$RUNNER_TEMP/theos/bin/"*.pl
 
       - name: Install iOS SDK
         run: |
@@ -28,10 +31,10 @@ jobs:
           mkdir -p "$RUNNER_TEMP/theos/sdks"
           cp -R "$RUNNER_TEMP/sdks/iPhoneOS16.5.sdk" "$RUNNER_TEMP/theos/sdks/"
 
-      - name: Check Theos tools
+      - name: Check build tools
         run: |
-          echo "THEOS=$THEOS"
-          ls -la "$THEOS/bin"
+          which ldid
+          ldid -h || true
           find "$THEOS" -name dm.pl -print
 
       - name: Build package
