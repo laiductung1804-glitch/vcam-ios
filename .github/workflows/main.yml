@@ -17,14 +17,22 @@ jobs:
 
       - name: Install Theos
         run: |
-          git clone --depth 1 https://github.com/theos/theos.git "$RUNNER_TEMP/theos"
+          git clone --depth 1 --recurse-submodules https://github.com/theos/theos.git "$RUNNER_TEMP/theos"
           echo "THEOS=$RUNNER_TEMP/theos" >> "$GITHUB_ENV"
+          echo "$RUNNER_TEMP/theos/bin" >> "$GITHUB_PATH"
+          chmod +x "$RUNNER_TEMP/theos/bin/"*.pl
 
       - name: Install iOS SDK
         run: |
           git clone --depth 1 https://github.com/theos/sdks.git "$RUNNER_TEMP/sdks"
           mkdir -p "$RUNNER_TEMP/theos/sdks"
           cp -R "$RUNNER_TEMP/sdks/iPhoneOS16.5.sdk" "$RUNNER_TEMP/theos/sdks/"
+
+      - name: Check Theos tools
+        run: |
+          echo "THEOS=$THEOS"
+          ls -la "$THEOS/bin"
+          find "$THEOS" -name dm.pl -print
 
       - name: Build package
         run: |
