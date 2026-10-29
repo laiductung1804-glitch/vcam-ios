@@ -1,3 +1,4 @@
+
 name: Build VCam
 
 on:
@@ -22,7 +23,8 @@ jobs:
       - name: Install iOS SDK
         run: |
           git clone --depth 1 https://github.com/theos/sdks.git "$RUNNER_TEMP/sdks"
-          cp -R "$RUNNER_TEMP/sdks/iPhoneOS.sdk" "$RUNNER_TEMP/theos/sdks/"
+          mkdir -p "$RUNNER_TEMP/theos/sdks"
+          cp -R "$RUNNER_TEMP/sdks/iPhoneOS16.5.sdk" "$RUNNER_TEMP/theos/sdks/"
 
       - name: Build package
         run: |
